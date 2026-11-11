@@ -1,15 +1,18 @@
 FROM python:3.12-slim
+COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /uvx /bin/
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1
+    UV_NO_CACHE=1 \
+    UV_PYTHON_DOWNLOADS=never
 
 WORKDIR /app
 
-# Install runtime deps from pyproject.toml (no dev deps).
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-dev --no-install-project
 COPY src/ ./src/
-RUN pip install --upgrade pip && pip install .
+RUN uv sync --locked --no-dev
+ENV PATH="/app/.venv/bin:$PATH"
 
 RUN mkdir -p /app/data
 ENV GTFS_CACHE_DIR=/app/data

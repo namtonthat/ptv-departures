@@ -84,7 +84,7 @@ Self-service at https://opendata.transport.vic.gov.au/ — register, create a ke
 
 1. Download or reuse the cached GTFS zip and search:
    ```bash
-   PTV_API_KEY=... python scripts/discover.py search "Ringwood"
+   PTV_API_KEY=... uv run scripts/discover.py search "Ringwood"
    ```
    This prints all stop_ids whose name contains "Ringwood" — each platform is a separate stop_id in the Victorian GTFS. Pick the one for the direction you want (city-bound = the platform that serves trains to the city).
 2. Add the resolved stop_id to `src/ptv_departures/stops.py`:
@@ -98,10 +98,9 @@ Self-service at https://opendata.transport.vic.gov.au/ — register, create a ke
 ## Local dev
 
 ```bash
-python3.12 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-pytest
-PTV_API_KEY=... uvicorn ptv_departures.main:app --reload
+uv sync
+uv run pytest
+PTV_API_KEY=... uv run uvicorn ptv_departures.main:app --reload
 ```
 
 ## Docker
