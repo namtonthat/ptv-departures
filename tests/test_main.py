@@ -1,7 +1,7 @@
 """End-to-end FastAPI tests — GTFS-based pipeline."""
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -16,7 +16,7 @@ FIXTURE_ZIP = Path(__file__).parent / "fixtures" / "test_gtfs.zip"
 
 # now_utc such that local Melbourne time is 2026-05-21 02:00:00 AEST (UTC+10)
 # 2026-05-21 02:00 AEST = 2026-05-20 16:00 UTC — both T1 (02:10) and T2 (02:25) are upcoming
-FIXED_NOW_UTC = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+FIXED_NOW_UTC = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
 
 
 @pytest.fixture(autouse=True)

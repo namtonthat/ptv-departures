@@ -5,14 +5,12 @@ No real network requests are made.
 """
 from __future__ import annotations
 
-import pytest
 import httpx
-from httpx import Response, Request
-
+import pytest
 from google.transit import gtfs_realtime_pb2
+from httpx import Request, Response
 
 from ptv_departures.gtfs_realtime import GTFSRealtimeError, TripUpdate, fetch_trip_updates
-
 
 # ---------------------------------------------------------------------------
 # Helpers

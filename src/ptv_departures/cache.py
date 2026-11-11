@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from datetime import UTC, datetime
+from typing import Any
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class TTLCache:

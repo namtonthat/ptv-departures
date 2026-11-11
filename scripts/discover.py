@@ -18,7 +18,6 @@ from pathlib import Path
 from ptv_departures.gtfs_static import download_gtfs_zip
 from ptv_departures.main import DEFAULT_GTFS_STATIC_URL
 
-
 CACHE_PATH = Path(os.getenv("GTFS_CACHE_DIR", "/tmp")) / "vic-gtfs.zip"
 
 
@@ -58,9 +57,8 @@ async def search(term: str) -> None:
                 if not name.endswith(".zip"):
                     continue
                 mode = name.split("/")[0]  # e.g. "2" → metro train
-                with outer.open(name) as blob:
-                    with zipfile.ZipFile(io.BytesIO(blob.read())) as inner:
-                        _search_in_zipfile(inner, term_lower, mode_label=f"mode={mode}")
+                with outer.open(name) as blob, zipfile.ZipFile(io.BytesIO(blob.read())) as inner:
+                    _search_in_zipfile(inner, term_lower, mode_label=f"mode={mode}")
 
 
 async def download_only() -> None:

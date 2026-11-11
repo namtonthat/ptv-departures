@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-import httpx  # noqa: F401  — imported so tests can patch 'ptv_departures.gtfs_static.httpx'
+import httpx
 
 __all__ = ["ScheduledDeparture", "StaticGTFS", "download_gtfs_zip"]
 
@@ -108,9 +108,8 @@ def _build_services_by_date(
         exc_type = int(row["exception_type"])
         if exc_type == 1:
             services_by_date.setdefault(d, set()).add(sid)
-        elif exc_type == 2:
-            if d in services_by_date:
-                services_by_date[d].discard(sid)
+        elif exc_type == 2 and d in services_by_date:
+            services_by_date[d].discard(sid)
 
     return services_by_date
 
@@ -147,7 +146,7 @@ class StaticGTFS:
     # ------------------------------------------------------------------
 
     @classmethod
-    def from_zip(cls, zip_path: Path, *, known_stop_ids: set[str]) -> "StaticGTFS":
+    def from_zip(cls, zip_path: Path, *, known_stop_ids: set[str]) -> StaticGTFS:
         """Parse *zip_path*; filter stop_times to rows for *known_stop_ids* only.
 
         Handles both flat GTFS zips and the Victorian zip-of-zips format where
@@ -180,21 +179,20 @@ class StaticGTFS:
         for name in outer.namelist():
             if not name.endswith(".zip"):
                 continue
-            with outer.open(name) as blob:
-                with zipfile.ZipFile(io.BytesIO(blob.read())) as inner:
-                    if "routes.txt" not in inner.namelist():
-                        continue
-                    with inner.open("routes.txt") as rf:
-                        reader = csv.DictReader(
-                            line.decode("utf-8-sig") for line in rf
-                        )
-                        for row in reader:
-                            if row.get("route_type") == "2":
-                                return name
+            with outer.open(name) as blob, zipfile.ZipFile(io.BytesIO(blob.read())) as inner:
+                if "routes.txt" not in inner.namelist():
+                    continue
+                with inner.open("routes.txt") as rf:
+                    reader = csv.DictReader(
+                        line.decode("utf-8-sig") for line in rf
+                    )
+                    for row in reader:
+                        if row.get("route_type") == "2":
+                            return name
         raise ValueError("No metro train inner zip found in outer zip")
 
     @classmethod
-    def _parse_zip(cls, zf: zipfile.ZipFile, *, known_stop_ids: set[str]) -> "StaticGTFS":
+    def _parse_zip(cls, zf: zipfile.ZipFile, *, known_stop_ids: set[str]) -> StaticGTFS:
         """Parse GTFS files from *zf* (a flat or single-subdir zip)."""
         prefix = _detect_prefix(zf)
 

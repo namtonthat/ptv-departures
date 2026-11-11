@@ -14,7 +14,7 @@ So we use now_utc that makes 02:00 local, i.e. 2026-05-20T16:00:00Z.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -26,7 +26,7 @@ FIXTURE_ZIP = Path(__file__).parent / "fixtures" / "test_gtfs.zip"
 
 # now_utc such that local Melbourne time is 2026-05-21 02:00:00 AEST (UTC+10)
 # 2026-05-21 02:00 AEST = 2026-05-20 16:00 UTC
-NOW_UTC = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+NOW_UTC = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
 
 
 @pytest.fixture
@@ -241,7 +241,7 @@ def test_line_and_destination_populated():
 def test_aggregates_across_multiple_stop_ids(load_static_fixture):
     """When stop_ids spans multiple platforms, merge results in chronological order."""
     static = load_static_fixture(known_stop_ids={"RWD-2", "RWD-3"})
-    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
     result = _build(
         static, [],
         stop_ids=["RWD-2", "RWD-3"],
@@ -257,7 +257,7 @@ def test_aggregates_across_multiple_stop_ids(load_static_fixture):
 def test_aggregation_respects_max_results(load_static_fixture):
     """max_results caps the merged output across multiple stop_ids."""
     static = load_static_fixture(known_stop_ids={"RWD-2", "RWD-3"})
-    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
     result = _build(
         static, [],
         stop_ids=["RWD-2", "RWD-3"],
@@ -276,7 +276,7 @@ def test_aggregation_respects_max_results(load_static_fixture):
 def test_destination_filter_keeps_matching_keywords(load_static_fixture):
     """destination_contains=['Flinders'] keeps only trips whose headsign contains it."""
     static = load_static_fixture(known_stop_ids={"RWD-2", "RWD-3"})
-    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
     result = _build(
         static, [],
         stop_ids=["RWD-2", "RWD-3"],
@@ -292,7 +292,7 @@ def test_destination_filter_keeps_matching_keywords(load_static_fixture):
 def test_destination_filter_none_keeps_all(load_static_fixture):
     """destination_contains=None acts as no filter."""
     static = load_static_fixture(known_stop_ids={"RWD-2", "RWD-3"})
-    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
     no_filter = _build(
         static, [],
         stop_ids=["RWD-2", "RWD-3"],
@@ -312,7 +312,7 @@ def test_destination_filter_none_keeps_all(load_static_fixture):
 def test_destination_filter_case_insensitive(load_static_fixture):
     """Filter matching is case-insensitive."""
     static = load_static_fixture(known_stop_ids={"RWD-2", "RWD-3"})
-    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 5, 20, 16, 0, 0, tzinfo=UTC)
     upper = _build(
         static, [],
         stop_ids=["RWD-2", "RWD-3"],

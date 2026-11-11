@@ -1,11 +1,11 @@
 """Async TTL cache with stale-on-error fallback."""
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 from ptv_departures.cache import TTLCache
 
-_BASE = datetime(2026, 5, 21, 0, 0, 0, tzinfo=timezone.utc)
+_BASE = datetime(2026, 5, 21, 0, 0, 0, tzinfo=UTC)
 
 
 def at(secs: int) -> datetime:

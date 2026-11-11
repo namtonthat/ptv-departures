@@ -4,9 +4,8 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 
@@ -28,12 +27,12 @@ DEFAULT_GTFS_REALTIME_URL = (
 )
 
 # Module-level static GTFS state — patchable in tests.
-_static_state: dict[str, Optional[StaticGTFS]] = {"value": None}
+_static_state: dict[str, StaticGTFS | None] = {"value": None}
 _static_lock = asyncio.Lock()
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _label_from_slug(slug: str) -> str:
