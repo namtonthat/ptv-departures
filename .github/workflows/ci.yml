@@ -9,11 +9,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      # setup-uv publishes no floating major tag after v7
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           python-version: "3.12"
-          cache: pip
-      - run: pip install -e ".[dev]"
-      - run: ruff check src tests
-      - run: pytest -v
+      - run: uv sync --locked
+      - run: uv run ruff check src tests
+      - run: uv run pytest -v
